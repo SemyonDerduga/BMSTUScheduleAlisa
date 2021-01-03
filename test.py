@@ -13,14 +13,16 @@ import datetime
 import icalendar
 import DateParser.get_events
 
-def get_schedule_by_date(group, date):
-	response = ""
-	day_scedule = DateParser.get_events.get_events(group, date)
-	#for lesson in day_scedule:
-	#	response += '{} {} в {}, потом '.format(lesson[1], lesson[2], lesson[3])
-	#response += 'можешь идти домой!'
-	return day_scedule
 
-rasp = get_schedule_by_date("ИУ3-71Б","2018-11-15")
+def get_schedule_by_date(group, date):
+    response = ""
+    day_scedule = DateParser.get_events.get_events(group, date)
+    # for lesson in day_scedule:
+    #	response += '{} {} в {}, потом '.format(lesson[1], lesson[2], lesson[3])
+    # response += 'можешь идти домой!'
+    return day_scedule
+
+
+rasp = get_schedule_by_date("ИУ3-71Б", "2018-11-15")
 
 print(rasp)

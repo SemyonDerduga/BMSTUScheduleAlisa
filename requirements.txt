@@ -1,0 +1,6 @@
+bs4
+redis
+flask
+icalendar
+cryptography
+bmstu-schedule

@@ -125,21 +125,3 @@ class Dialog:
                 response_text = self.not_understood()
             else:
                 response_text = self.error()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
