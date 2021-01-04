@@ -149,6 +149,8 @@ def handle_dialog(req, res):
             data = str(data.decode())
             state = data.split(':')[0]
 
+    logging.info(f"Current state is {state}")
+
     if state == 'base':
         return base_state(req, res, user_id)
     elif state == 'welcome':
