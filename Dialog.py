@@ -48,6 +48,8 @@ error = ["ошибка", "неправильно", "промах", "оплошн
 bakalavr = ["бакалавр", "бакалавриат"]
 aspirant = ["аспирант", "аспирантура"]
 magistr = ["магистр", "магистратура"]
+change = ["сменить", "поменять", "изменить", "другая", "другую", "группу", "группа"]
+
 stepeni = [bakalavr, aspirant, magistr]
 facultet_buttons = [  # TODO: расположить в порядке популярности
     {'title': 'АК', 'hide': True},
@@ -370,14 +372,12 @@ def base_state(req, res, user_id):
         res['response']['buttons'] = base_buttons
         return
 
-    if ('cменить' in req['request']['original_utterance'].lower() or 'поменять' in req['request'][
-        'original_utterance'].lower() or 'изменить' in req['request']['original_utterance'].lower()) and 'группу' in \
-            req['request'][
-                'original_utterance'].lower():
-        db.delete(user_id)
-        res['response']['text'] = "Тогда назови факультет"
-        res['response']['buttons'] = facultet_buttons
-        return
+    for change_key_word in change:
+        if change_key_word in req['request']['original_utterance'].lower():
+            db.delete(user_id)
+            res['response']['text'] = "Хочешь изменить группу? Тогда назови факультет"
+            res['response']['buttons'] = facultet_buttons
+            return
 
     if req['request']['original_utterance']:
         res['response']['text'] = "Я умею отвечать только на вопросы о расписании!"
