@@ -317,27 +317,28 @@ def base_state(req, res, user_id):
     group_id = str(facultet + cafedra_number + '-' + group_number + degree)
 
 
-    for entities in req['request']['entities']:
-        if entities['type'] == "YANDEX.DATETIME":
-            yandex_date = entities['value']
+    if 'entities' in req['request']:
+        for entities in req['request']['entities']:
+            if entities['type'] == "YANDEX.DATETIME":
+                yandex_date = entities['value']
 
-            if "day_is_relative" in yandex_date and yandex_date["day_is_relative"]:
-                date = (datetime.datetime.today() + datetime.timedelta(days=yandex_date["day"])).strftime('%Y-%m-%d')
+                if "day_is_relative" in yandex_date and yandex_date["day_is_relative"]:
+                    date = (datetime.datetime.today() + datetime.timedelta(days=yandex_date["day"])).strftime('%Y-%m-%d')
+                    rasp = get_schedule_by_date(group_id, date)
+                    res['response']['text'] = rasp
+                    res['response']['buttons'] = base_buttons
+                    return
+
+                year = yandex_date["year"] if "year" in yandex_date else datetime.datetime.today().strftime("%Y")
+                month = yandex_date["month"] if "month" in yandex_date else datetime.datetime.today().strftime("%m")
+                day = yandex_date["day"] if "day" in yandex_date else datetime.datetime.today().strftime("%d")
+
+                date = f'{year}-{month}-{day}'
+
                 rasp = get_schedule_by_date(group_id, date)
                 res['response']['text'] = rasp
                 res['response']['buttons'] = base_buttons
                 return
-
-            year = yandex_date["year"] if "year" in yandex_date else datetime.datetime.today().strftime("%Y")
-            month = yandex_date["month"] if "month" in yandex_date else datetime.datetime.today().strftime("%m")
-            day = yandex_date["day"] if "day" in yandex_date else datetime.datetime.today().strftime("%d")
-
-            date = f'{year}-{month}-{day}'
-
-            rasp = get_schedule_by_date(group_id, date)
-            res['response']['text'] = rasp
-            res['response']['buttons'] = base_buttons
-            return
 
 
 
