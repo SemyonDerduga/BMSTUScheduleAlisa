@@ -317,9 +317,8 @@ def base_state(req, res, user_id):
     group_id = str(facultet + cafedra_number + '-' + group_number + degree)
 
 
-    if 'entities' in req['request']:
-        print(req['request']['entities'])
-        for entities in req['request']['entities']:
+    if 'nlu' in req['request'] and 'entities' in req['request']['nlu']:
+        for entities in req['request']['nlu']['entities']:
             if entities['type'] == "YANDEX.DATETIME":
                 yandex_date = entities['value']
 
