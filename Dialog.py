@@ -104,6 +104,16 @@ base_buttons = [
 
 ]
 
+day_of_week_map = {
+    'понедельник': 1,
+    'вторник': 2,
+    'сред': 3,
+    'четверг': 4,
+    'пятниц': 5,
+    'суббот': 6,
+    'воскрес': 7,
+}
+
 db = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
@@ -341,16 +351,6 @@ def base_state(req, res, user_id):
                 res['response']['text'] = rasp
                 res['response']['buttons'] = base_buttons
                 return
-
-    day_of_week_map = {
-        'понедельник': 1,
-        'вторник': 2,
-        'сред': 3,
-        'четверг': 4,
-        'пятниц': 5,
-        'суббот': 6,
-        'воскрес': 7,
-    }
 
     for day in day_of_week_map.keys():
         if day in req['request']['original_utterance'].lower():
