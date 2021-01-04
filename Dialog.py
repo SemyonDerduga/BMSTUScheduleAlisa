@@ -316,20 +316,22 @@ def base_state(req, res, user_id):
     degree = str(db.get(user_id).decode()).split(':')[4]
     group_id = str(facultet + cafedra_number + '-' + group_number + degree)
 
-
     if 'nlu' in req['request'] and 'entities' in req['request']['nlu']:
         for entities in req['request']['nlu']['entities']:
             if entities['type'] == "YANDEX.DATETIME":
                 yandex_date = entities['value']
 
                 if "day_is_relative" in yandex_date and yandex_date["day_is_relative"]:
-                    date = (datetime.datetime.today() + datetime.timedelta(days=yandex_date["day"])).strftime('%Y-%m-%d')
+                    date = (datetime.datetime.today() + datetime.timedelta(days=yandex_date["day"])).strftime(
+                        '%Y-%m-%d')
                     rasp = get_schedule_by_date(group_id, date)
                     res['response']['text'] = rasp
                     res['response']['buttons'] = base_buttons
                     return
 
                 year = yandex_date["year"] if "year" in yandex_date else datetime.datetime.today().strftime("%Y")
+                if int(year) < 2000:
+                    year = str(int(year) + 2000)
                 month = yandex_date["month"] if "month" in yandex_date else datetime.datetime.today().strftime("%m")
                 day = yandex_date["day"] if "day" in yandex_date else datetime.datetime.today().strftime("%d")
 
@@ -340,52 +342,19 @@ def base_state(req, res, user_id):
                 res['response']['buttons'] = base_buttons
                 return
 
+    day_of_week_map = {
+        'понедельник': 1,
+        'вторник': 2,
+        'сред': 3,
+        'четверг': 4,
+        'пятниц': 5,
+        'суббот': 6,
+        'воскрес': 7,
+    }
 
-
-
-    if req['request']['original_utterance'] == 'Какие сегодня пары?':
-        date = datetime.datetime.today().strftime('%Y-%m-%d')
-        rasp = get_schedule_by_date(group_id, date)
-        res['response']['text'] = rasp
-        res['response']['buttons'] = base_buttons
-        return
-
-    if req['request']['original_utterance'] == 'Какие завтра пары?':
-        date = (datetime.datetime.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-        rasp = get_schedule_by_date(group_id, date)
-        res['response']['text'] = rasp
-        res['response']['buttons'] = base_buttons
-        return
-
-    if req['request']['original_utterance'] == 'Какие пары послезавтра?':
-        date = (datetime.datetime.today() + datetime.timedelta(days=2)).strftime('%Y-%m-%d')
-        rasp = get_schedule_by_date(group_id, date)
-        res['response']['text'] = rasp
-        res['response']['buttons'] = base_buttons
-        return
-
-    if req['request']['original_utterance'] == 'Какие пары в понедельник?':
-        return get_schedule_by_weekday(1, group_id, res)
-
-    if req['request']['original_utterance'] == 'Какие во вторник?':
-        return get_schedule_by_weekday(2, group_id, res)
-
-    if req['request']['original_utterance'] == 'Какие пары в среду?':
-        return get_schedule_by_weekday(3, group_id, res)
-
-    if req['request']['original_utterance'] == 'Какие пары в четверг?':
-        return get_schedule_by_weekday(4, group_id, res)
-
-    if req['request']['original_utterance'] == 'Какие пары в пятницу?':
-        return get_schedule_by_weekday(5, group_id, res)
-
-    if req['request']['original_utterance'] == 'Какие пары в субботу?':
-        return get_schedule_by_weekday(6, group_id, res)
-
-    if req['request']['original_utterance'] == 'Какие пары в воскресение?':
-        res['response']['text'] = "В воскресение выходной! Ты что, совсем переучился?"
-        res['response']['buttons'] = base_buttons
-        return
+    for day in day_of_week_map.keys():
+        if day in req['request']['original_utterance'].lower():
+            return get_schedule_by_weekday(day_of_week_map[day], group_id, res)
 
     if req['request']['original_utterance'] == 'Во сколько первая пара во втроник?':
         weekday = datetime.datetime.today().weekday() + 1
