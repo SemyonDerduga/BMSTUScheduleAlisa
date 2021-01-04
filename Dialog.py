@@ -303,7 +303,7 @@ def get_group_state(req, res, user_id):
     degree = str(db.get(user_id).decode()).split(':')[4]
     if degree:
         res['response'][
-            'text'] = 'Твоя группа ' + facultet + cafedra_number + '-' + group_number + ' верно? Теперь ты можешь спрашивать меня о расписании. Также ты можешь в любой момент сменить группу!'
+            'text'] = 'Твоя группа ' + facultet + cafedra_number + '-' + group_number + degree + ' верно? Теперь ты можешь спрашивать меня о расписании. Также ты можешь в любой момент сменить группу!'
         res['response']['buttons'] = base_buttons
     return
 
