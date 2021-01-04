@@ -15,11 +15,7 @@ import DateParser.get_events
 
 
 def get_schedule_by_date(group, date):
-    response = ""
     day_scedule = DateParser.get_events.get_events(group, date)
-    # for lesson in day_scedule:
-    #	response += '{} {} в {}, потом '.format(lesson[1], lesson[2], lesson[3])
-    # response += 'можешь идти домой!'
     return day_scedule
 
 
