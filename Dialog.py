@@ -299,13 +299,9 @@ def get_group_state(req, res, user_id):
         res['response']['text'] = 'Нужно сказать Бакалавр ты Магистр или Аспирант.'
         res['response']['buttons'] = degree_buttons
 
-    try:
-        degree = str(db.get(user_id).decode()).split(':')[4]
-    except IndexError:
-        res['response']['text'] = 'Напомни,пожалуйста, свой факультет.'
-        db.delete(user_id)
-        return
-    if degree == "Л":
+
+    degree = str(db.get(user_id).decode()).split(':')[4]
+    if degree:
         res['response'][
             'text'] = 'Твоя группа ' + facultet + cafedra_number + '-' + group_number + ' верно? Теперь ты можешь спрашивать меня о расписании. Также ты можешь в любой момент сменить группу!'
         res['response']['buttons'] = base_buttons
