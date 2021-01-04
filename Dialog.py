@@ -158,7 +158,7 @@ def handle_dialog(req, res):
     elif state == 'get_facultet':
         return get_facultet_state(req, res, user_id)
     elif state == 'get_cafedra':
-        return (req, res, user_id)
+        return get_cafedra_state(req, res, user_id)
     elif state == 'get_group':
         return get_group_state(req, res, user_id)
 
