@@ -288,11 +288,11 @@ def get_group_state(req, res, user_id):
                     res['response']['buttons'] = facultet_buttons
                     db.delete(user_id)
                     return
+        else:
+            res['response']['text'] = 'Нужно сказать Бакалавр ты Магистр или Аспирант.'
+            res['response']['buttons'] = degree_buttons
+            return
 
-
-    res['response']['text'] = 'Нужно сказать Бакалавр ты Магистр или Аспирант.'
-    res['response']['buttons'] = degree_buttons
-    return
 
     degree = str(db.get(user_id).decode()).split(':')[4]
     if degree == "Л":
