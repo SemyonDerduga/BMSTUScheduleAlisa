@@ -383,5 +383,10 @@ def base_state(req, res, user_id):
         res['response']['buttons'] = base_buttons
         return
 
+    if req['request']['original_utterance'] == '':
+        res['response']['text'] = "Привет! Можешь спрашивать меня о своем расписании."
+        res['response']['buttons'] = base_buttons
+        return
+
 
 app.run(ssl_context='adhoc', host='0.0.0.0', port=5000)
