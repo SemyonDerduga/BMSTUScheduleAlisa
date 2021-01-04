@@ -293,7 +293,12 @@ def get_group_state(req, res, user_id):
             res['response']['buttons'] = degree_buttons
 
 
-    degree = str(db.get(user_id).decode()).split(':')[4]
+    try:
+        degree = str(db.get(user_id).decode()).split(':')[4]
+    except IndexError:
+        res['response']['text'] = 'Напомни,пожалуйста, свой факультет.'
+        db.delete(user_id)
+        return
     if degree == "Л":
         res['response'][
             'text'] = 'Твоя группа ' + facultet + cafedra_number + '-' + group_number + ' верно? Теперь ты можешь спрашивать меня о расписании. Также ты можешь в любой момент сменить группу!'
