@@ -45,12 +45,13 @@ error = ["ошибка", "неправильно", "промах", "оплошн
          "ошибочка", "обсчет", "парахронизм", "перлы", "провинность", "зевок", "прегрешение", "недоработка",
          "самообман", "прочет", "коллимация", "иллюзия", "недосмотр", "обвес", "неточность", "перекос",
          "самообольщение"]
-bakalavr = ["бакалавр", "бакалавриат"]
-aspirant = ["аспирант", "аспирантура"]
-magistr = ["магистр", "магистратура"]
+
+degrees = {"бакалавр": ["бакалавр", "бакалавриат", "козер"],
+           "аспирант": ["аспирант", "аспирантура"],
+           "магистр": ["магистр", "магистратура"]}
+
 change = ["сменить", "поменять", "изменить", "другая", "другую", "группу", "группа"]
 
-stepeni = [bakalavr, aspirant, magistr]
 facultet_buttons = [  # TODO: расположить в порядке популярности
     {'title': 'АК', 'hide': True},
     {'title': 'БМТ', 'hide': True},
@@ -262,36 +263,41 @@ def get_group_state(req, res, user_id):
         db.delete(user_id)
         return
 
-    stepen_name = req['request']['original_utterance'].rstrip(string.punctuation).lower().replace(' ', '')
+    answer = req['request']['original_utterance'].rstrip(string.punctuation).lower()
+    answer_degree = None
+
+    for degree, key_words in degrees.items():
+        for key_word in key_words:
+            if key_word in answer:
+                answer_degree = degree
+
     facultet = str(db.get(user_id).decode()).split(':')[1]
     cafedra_number = str(db.get(user_id).decode()).split(':')[2]
     group_number = str(db.get(user_id).decode()).split(':')[3]
-    for stepen in stepeni:
-        if stepen_name in stepen:
-            state = 'base'
-            group_id = str(facultet + cafedra_number + '-' + group_number + stepen_name.upper()[0])
-            files = os.listdir("./Groups/")
-            if str(group_id + ".ics") not in files:
-                db.set(user_id, str(state + ":" + facultet + ":" + cafedra_number + ":" + group_number + ":" + "Л"))
-                if str(group_id[:-1] + "Л.ics") not in files:
-                    res['response'][
-                        'text'] = 'Извини, я не нахожу твою группу, давай попробуем ещё раз. Какой у тебя факультет?'
-                    res['response']['buttons'] = facultet_buttons
-                    db.delete(user_id)
-                    return
-            else:
-                db.set(user_id, str(state + ":" + facultet + ":" + cafedra_number + ":" + group_number + ":" + str(
-                    stepen_name.upper()[0])))
-                if str(group_id + ".ics") not in files:
-                    res['response'][
-                        'text'] = 'Извини, я не нахожу твою группу, давай попробуем ещё раз. Какой у тебя факультет?'
-                    res['response']['buttons'] = facultet_buttons
-                    db.delete(user_id)
-                    return
+    if answer_degree:
+        state = 'base'
+        group_id = str(facultet + cafedra_number + '-' + group_number + answer_degree.upper()[0])
+        files = os.listdir("./Groups/")
+        if str(group_id + ".ics") not in files:
+            db.set(user_id, str(state + ":" + facultet + ":" + cafedra_number + ":" + group_number + ":" + "Л"))
+            if str(group_id[:-1] + "Л.ics") not in files:
+                res['response'][
+                    'text'] = 'Извини, я не нахожу твою группу, давай попробуем ещё раз. Какой у тебя факультет?'
+                res['response']['buttons'] = facultet_buttons
+                db.delete(user_id)
+                return
         else:
-            res['response']['text'] = 'Нужно сказать Бакалавр ты Магистр или Аспирант.'
-            res['response']['buttons'] = degree_buttons
-
+            db.set(user_id, str(state + ":" + facultet + ":" + cafedra_number + ":" + group_number + ":" + str(
+                answer_degree.upper()[0])))
+            if str(group_id + ".ics") not in files:
+                res['response'][
+                    'text'] = 'Извини, я не нахожу твою группу, давай попробуем ещё раз. Какой у тебя факультет?'
+                res['response']['buttons'] = facultet_buttons
+                db.delete(user_id)
+                return
+    else:
+        res['response']['text'] = 'Нужно сказать Бакалавр ты Магистр или Аспирант.'
+        res['response']['buttons'] = degree_buttons
 
     try:
         degree = str(db.get(user_id).decode()).split(':')[4]
