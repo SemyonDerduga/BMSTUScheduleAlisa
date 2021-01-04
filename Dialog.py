@@ -370,7 +370,10 @@ def base_state(req, res, user_id):
         res['response']['buttons'] = base_buttons
         return
 
-    if req['request']['original_utterance'] == 'Сменить группу':
+    if ('cменить' in req['request']['original_utterance'].lower() or 'поменять' in req['request'][
+        'original_utterance'].lower() or 'изменить' in req['request']['original_utterance'].lower()) and 'группу' in \
+            req['request'][
+                'original_utterance'].lower():
         db.delete(user_id)
         res['response']['text'] = "Тогда назови факультет"
         res['response']['buttons'] = facultet_buttons
