@@ -13,6 +13,8 @@ app = Flask(__name__)
 
 logging.basicConfig(level=logging.DEBUG)
 
+GROUPS_PATH = "/root/BMSTU_Schedule/BMSTUScheduleAlisa/Groups/"
+
 # Хранилище данных о сессиях.
 sessionStorage = {}
 
@@ -277,7 +279,7 @@ def get_group_state(req, res, user_id):
     if answer_degree:
         state = 'base'
         group_id = str(facultet + cafedra_number + '-' + group_number + answer_degree.upper()[0])
-        files = os.listdir("./Groups/")
+        files = os.listdir(GROUPS_PATH)
         if str(group_id + ".ics") not in files:
             db.set(user_id, str(state + ":" + facultet + ":" + cafedra_number + ":" + group_number + ":" + "Л"))
             if str(group_id[:-1] + "Л.ics") not in files:
