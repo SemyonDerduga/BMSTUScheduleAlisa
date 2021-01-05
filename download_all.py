@@ -7,12 +7,13 @@ import datetime
 import icalendar
 import DateParser.get_events
 
+GROUPS_PATH = "/root/BMSTU_Schedule/BMSTUScheduleAlisa/Groups/"
 
 def download_schedule(group):
-    path = "Groups/" + group.upper() + "_TO_FIX.ics"
-    fix_path = "Groups/" + group.upper() + ".ics"
+    path = GROUPS_PATH + group.upper() + "_TO_FIX.ics"
+    fix_path = GROUPS_PATH + group.upper() + ".ics"
 
-    os.system(str("bmstu-schedule " + group.upper() + " -o ./Groups"))
+    os.system(str("bmstu-schedule " + group.upper() + " -o " + GROUPS_PATH))
     try:
         os.rename(fix_path, path)
     except FileNotFoundError:
